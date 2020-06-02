@@ -1,15 +1,17 @@
 package tower.of.ascension.states;
 
-import org.lwjgl.input.Mouse;
 import org.newdawn.slick.*;
 import org.newdawn.slick.state.*;
+import org.newdawn.slick.state.transition.FadeInTransition;
+import org.newdawn.slick.state.transition.FadeOutTransition;
 
 public class Menu extends BasicGameState {
 
-    Image playNow;
-    Image exitGame;
+    private Image menuImage;
+    private Image menuHTP;
+    public static Music menuMusic;
 
-    String mouse = "No input!";
+    private boolean info;
 
     public Menu(int state) {
     }
@@ -21,38 +23,64 @@ public class Menu extends BasicGameState {
 
     @Override
     public void init(GameContainer gc, StateBasedGame sbg) throws SlickException {
-        playNow = new Image("res/playNow.png");
-        exitGame = new Image("res/exitGame.png");
+
+        menuImage = new Image("res/menuImage.png");
+        menuHTP = new Image("res/howToPlay.png");
+
+        menuMusic = new Music("res/sounds/playMusic.ogg");
+        menuMusic.setVolume(0.01f);
+        menuMusic.loop();
+
+        info = false;
 
     }
 
     @Override
     public void render(GameContainer gc, StateBasedGame sbg, Graphics g) throws SlickException {
-        g.drawString(mouse, 360, 50);
-        g.drawString("Tower of Ascension", 100, 50);
-        playNow.draw(Game.MIDW - 75, 100, 150, 50);
-        exitGame.draw(Game.MIDW - 75, 200, 150, 50);
+        menuImage.draw(0, 0, 640, 480);
+
+        if (info) {
+            g.drawImage(menuHTP, 75, 70);
+            if (!info) {
+                g.clear();
+            }
+        }
+
+        //g.drawRect(75, 70, 500, 290);
+        g.setColor(Color.white);
+        g.setLineWidth(1.5f);
+        g.drawString("(P) Play Now", 75, 365);
+        g.drawString("(H) How-To-Play", 75, 395);
+        g.drawString("(Q) Quit Game", 75, 425);
+
+        g.scale(2f, 2f);
+        g.drawString("Tower Of Ascension", Game.MIDW - 240, 15);
+        g.scale(1f, 1f);
+
     }
 
     @Override
     public void update(GameContainer gc, StateBasedGame sbg, int delta) throws SlickException {
-        int xpos = Mouse.getX();
-        int ypos = Mouse.getY();
+        Input input = gc.getInput();
 
-        mouse = "Mouse position x " + xpos + " y: " + ypos;
-        
         //play button
-        if ((xpos > (Game.MIDW - 75) && xpos < (Game.MIDW + 75)) && (ypos > 211 && ypos < 261)) {
-            if (Mouse.isButtonDown(0)) {
-                sbg.enterState(1);
-            }
+        if (input.isKeyDown(Input.KEY_P)) {
+            sbg.getState(1).init(gc, sbg);
+            sbg.enterState(1, new FadeOutTransition(), new FadeInTransition());
         }
+
         //exit button
-        if ((xpos > (Game.MIDW - 75) && xpos < (Game.MIDW + 75)) && (ypos > 111 && ypos < 161)) {
-            if (Mouse.isButtonDown(0)) {
-                System.exit(0);
-            }
+        if (input.isKeyDown(Input.KEY_Q)) {
+            System.exit(0);
         }
     }
 
+    @Override
+    public void keyPressed(int key, char code) {
+
+        //Info Menu
+        if (key == 35) {
+            info = !info;
+        }
+    }
 }
