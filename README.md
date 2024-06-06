@@ -1,4 +1,4 @@
-# TowerOfAscension
+# Tower Of Ascension
 Tower of Ascension is a Hack/Slash Java Game for Windows
 
 The main goal of this game is to survive as many hordes of enemies as possible by elimiating each wave as they come, 
